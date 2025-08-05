@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
+from urllib.parse import quote
 from models.user import get_user_model
 from models.family_member import get_family_member_model
 
@@ -22,7 +23,9 @@ def create_app():
     db_password = os.getenv('DB_PASSWORD', 'Hacker!@#123123')
     db_host = os.getenv('DB_HOST', '127.0.0.1')
     db_name = os.getenv('DB_NAME', 'mobile_app_backend')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
+    # URL encode the password to handle special characters like #
+    encoded_password = quote(db_password)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{encoded_password}@{db_host}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secure-secret-key')
     app.config['JWT_BLOCKLIST_ENABLED'] = True
