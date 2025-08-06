@@ -1,7 +1,7 @@
 # D:\backendflask\project-root\routes/user.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from main import db  # Keep db for models
+from main import db  # Only import db from main
 
 user_bp = Blueprint('user', __name__)
 
@@ -9,9 +9,11 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
+    from flask import current_app
     from models.user import User
     current_user = int(get_jwt_identity())
-    user = User.query.get(current_user)
+    # Get the User model from the current app context
+    user = current_app.config.get('User').query.get(current_user)
     if user:
         return jsonify({
             'id': user.id,
@@ -25,9 +27,9 @@ def get_profile():
 @user_bp.route('/profile/update', methods=['PUT'])
 @jwt_required()
 def update_profile():
-    from models.user import User
+    from flask import current_app
     current_user = int(get_jwt_identity())
-    user = User.query.get(current_user)
+    user = current_app.config.get('User').query.get(current_user)
     if not user:
         return jsonify({'error': 'User not found'}), 404
     
@@ -46,9 +48,10 @@ def update_profile():
 @user_bp.route('/invite-family-member', methods=['POST'])
 @jwt_required()
 def invite_family_member():
-    from models.family_member import FamilyMember
-    from models.user import User
+    from flask import current_app
     current_user = int(get_jwt_identity())
+    User = current_app.config.get('User')
+    FamilyMember = current_app.config.get('FamilyMember')
     user = User.query.get(current_user)
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -69,9 +72,10 @@ def invite_family_member():
 @user_bp.route('/family-members', methods=['GET'])
 @jwt_required()
 def get_family_members():
-    from models.family_member import FamilyMember
-    from models.user import User
+    from flask import current_app
     current_user = int(get_jwt_identity())
+    User = current_app.config.get('User')
+    FamilyMember = current_app.config.get('FamilyMember')
     user = User.query.get(current_user)
     if not user:
         return jsonify({'error': 'User not found'}), 404

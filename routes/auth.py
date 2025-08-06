@@ -22,8 +22,8 @@ login_schema = LoginSchema()
 # Signup Endpoint
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
-    from main import db
-    from models.user import User
+    from flask import current_app
+    from main import db, User
     try:
         data = user_schema.load(request.json)
         
@@ -50,8 +50,8 @@ def signup():
 # Login Endpoint
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    from main import db
-    from models.user import User
+    from flask import current_app
+    from main import db, User
     try:
         data = login_schema.load(request.json)
         
@@ -78,16 +78,16 @@ def login():
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    from main import app
+    from flask import current_app
     jti = get_jwt()['jti']
-    app.blocklist.add(jti)
+    current_app.blocklist.add(jti)
     return jsonify({'message': 'Successfully logged out'}), 200
 
 # Refresh Token Endpoint
 @auth_bp.route('/refresh-token', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh_token():
-    from main import app
+    from flask import current_app
     current_user = get_jwt_identity()
     new_access_token = create_access_token(identity=current_user)
     return jsonify({'access_token': new_access_token}), 200
@@ -96,8 +96,8 @@ def refresh_token():
 @auth_bp.route('/verify-email', methods=['POST'])
 @jwt_required()
 def verify_email():
-    from main import db, app
-    from models.user import User
+    from flask import current_app
+    from main import db, User
     current_user = int(get_jwt_identity())
     user = User.query.get(current_user)
     if user:
@@ -116,8 +116,8 @@ def forgot_password():
 # Reset Password Endpoint
 @auth_bp.route('/reset-password', methods=['POST'])
 def reset_password():
-    from main import db
-    from models.user import User
+    from flask import current_app
+    from main import db, User
     data = request.get_json()
     email = data.get('email')
     new_password = data.get('password')

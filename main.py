@@ -14,6 +14,10 @@ db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 
+# Initialize models at module level
+User = None
+FamilyMember = None
+
 def create_app():
     app = Flask(__name__)
     
@@ -22,7 +26,17 @@ def create_app():
     db_password = os.getenv('DB_PASSWORD', 'Hacker!@#123123')
     db_host = os.getenv('DB_HOST', '127.0.0.1')
     db_name = os.getenv('DB_NAME', 'mobile_app_backend')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
+    # URL encode the password to handle special characters
+    from urllib.parse import quote
+    
+    # Handle host and port correctly
+    if ':' in db_host:
+        host_parts = db_host.split(':')
+        db_host = host_parts[0]
+        db_port = host_parts[1]
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{quote(db_password)}@{db_host}:{db_port}/{db_name}'
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{quote(db_password)}@{db_host}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secure-secret-key')
     app.config['JWT_BLOCKLIST_ENABLED'] = True
@@ -43,6 +57,9 @@ def create_app():
     global User, FamilyMember
     User = get_user_model(db)
     FamilyMember = get_family_member_model(db)
+    # Store models in app.config for access from routes
+    app.config['User'] = User
+    app.config['FamilyMember'] = FamilyMember
     with app.app_context():
         db.create_all()
 
