@@ -11,6 +11,7 @@ def get_user_model(db):
         password_hash = db.Column(db.String(255), nullable=False)  # Increased from 128 to 255
         created_at = db.Column(db.DateTime, default=datetime.utcnow)
         verified = db.Column(db.Boolean, default=False)
+        role = db.Column(db.String(50), default='user', nullable=False)
 
         def set_password(self, password):
             self.password_hash = generate_password_hash(password)

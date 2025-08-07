@@ -59,7 +59,10 @@ def login():
         if not user or not user.check_password(data['password']):
             return jsonify({'error': 'Invalid email or password'}), 401
 
-        additional_claims = {"email": user.email}
+        additional_claims = {
+            "email": user.email,
+            "role": user.role
+        }
         access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(user.id), additional_claims=additional_claims)
         return jsonify({

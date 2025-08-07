@@ -1,0 +1,282 @@
+{
+  "info": {
+    "_postman_id": "b5e7c8f9-d6a3-4e2b-8c1a-f0e9b4d3c2a1",
+    "name": "Supplement Compliance API",
+    "description": "Collection for testing the supplement compliance API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login to get JWT token"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Supplements",
+      "item": [
+        {
+          "name": "Get All Supplements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/supplements/all",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "all"]
+            },
+            "description": "Get all supplements for the authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Log Supplement Intake",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplement_id\": 1,\n  \"family_member_id\": null,\n  \"dosage_taken\": \"10mg\",\n  \"notes\": \"Taken after breakfast\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/supplements/log-intake",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "log-intake"]
+            },
+            "description": "Log the intake of a supplement"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Today's Intake",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/supplements/today-intake/{{member_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "today-intake", "{{member_id}}"]
+            },
+            "description": "Get today's supplement intake for a specific member"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Photo Confirmation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "intake_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/supplements/photo-confirmation",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "photo-confirmation"]
+            },
+            "description": "Upload a photo confirmation of supplement intake"
+          },
+          "response": []
+        },
+        {
+          "name": "Set Reminder Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplement_id\": 1,\n  \"family_member_id\": null,\n  \"time\": \"08:00\",\n  \"days\": \"Mon,Tue,Wed,Thu,Fri,Sat,Sun\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/supplements/reminder-settings",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "reminder-settings"]
+            },
+            "description": "Set reminder settings for a supplement"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplement Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/supplements/stats/{{member_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "stats", "{{member_id}}"]
+            },
+            "description": "Get supplement statistics for a specific member"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Low Stock Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/supplements/low-stock-alerts",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "low-stock-alerts"]
+            },
+            "description": "Get alerts for supplements with stock below threshold"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplement History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/supplements/history/{{member_id}}?start_date=2023-01-01&end_date=2023-12-31&supplement_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["supplements", "history", "{{member_id}}"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2023-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2023-12-31"
+                },
+                {
+                  "key": "supplement_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get supplement intake history for a specific member"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-extract JWT token from login response",
+          "if (pm.response.code === 200 && pm.info.requestName === 'Login') {",
+          "    var jsonData = pm.response.json();",
+          "    if (jsonData.access_token) {",
+          "        pm.environment.set('jwt_token', jsonData.access_token);",
+          "        console.log('JWT token extracted and saved to environment');",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member_id",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Supplements API",
+    "description": "Collection for testing the Supplement API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/auth/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login to get JWT token"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Supplements",
+      "item": [
+        {
+          "name": "Create Supplement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT token from login response"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vitamin D3\",\n  \"description\": \"Supports bone health and immune function\",\n  \"dosage\": \"1000 IU daily\",\n  \"stock_level\": 30,\n  \"low_stock_threshold\": 5,\n  \"image_url\": \"https://example.com/vitamind.jpg\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/supplements/create",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "supplements",
+                "create"
+              ]
+            },
+            "description": "Create a new supplement"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Supplements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT token from login response"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/supplements/all",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "supplements",
+                "all"
+              ]
+            },
+            "description": "Get all supplements for the authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Supplement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT token from login response"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vitamin D3 + K2\",\n  \"description\": \"Supports bone health and immune function with added K2\",\n  \"dosage\": \"1000 IU D3 + 100 mcg K2 daily\",\n  \"stock_level\": 25,\n  \"low_stock_threshold\": 10,\n  \"image_url\": \"https://example.com/vitamind_k2.jpg\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/supplements/update/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "supplements",
+                "update",
+                "1"
+              ]
+            },
+            "description": "Update an existing supplement"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Supplement",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT token from login response"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/supplements/delete/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "supplements",
+                "delete",
+                "1"
+              ]
+            },
+            "description": "Delete a supplement"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplement Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT token from login response"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/supplements/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "supplements",
+                "1"
+              ]
+            },
+            "description": "Get detailed information about a specific supplement"
+          },
+          "response": []
+        }
+      ],
+      "description": "Supplement management endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-save the access token from login response",
+          "if (pm.response.code === 200 && pm.request.url.toString().includes('/auth/login')) {",
+          "    var jsonData = pm.response.json();",
+          "    if (jsonData.access_token) {",
+          "        pm.environment.set(\"access_token\", jsonData.access_token);",
+          "        console.log(\"Access token saved to environment\");",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

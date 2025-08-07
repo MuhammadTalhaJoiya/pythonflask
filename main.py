@@ -7,6 +7,11 @@ import os
 from dotenv import load_dotenv
 from models.user import get_user_model
 from models.family_member import get_family_member_model
+from models.supplement import get_supplement_model, get_supplement_intake_model, get_reminder_model
+from models.subscription import get_subscription_model, get_subscription_product_model
+from models.rewards import get_reward_model, get_challenge_model, get_referral_model, get_reward_transaction_model
+from models.product import get_product_model
+from models.order import get_order_model
 
 load_dotenv()  # Load .env file
 
@@ -17,6 +22,17 @@ jwt = JWTManager()
 # Initialize models at module level
 User = None
 FamilyMember = None
+Supplement = None
+SupplementIntake = None
+Reminder = None
+Subscription = None
+SubscriptionProduct = None
+Reward = None
+Challenge = None
+Referral = None
+RewardTransaction = None
+Product = None
+Order = None
 
 def create_app():
     app = Flask(__name__)
@@ -50,18 +66,67 @@ def create_app():
     # Import and register blueprints after app initialization
     from routes.auth import auth_bp
     from routes.user import user_bp
+    from routes.supplements import supplements_bp
+    from routes.compliance import compliance_bp
+    from routes.subscription import subscription_bp
+    from routes.rewards import rewards_bp
+    from routes.admin import admin_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/user')
+    app.register_blueprint(supplements_bp, url_prefix='/supplements')
+    app.register_blueprint(compliance_bp, url_prefix='/compliance')
+    app.register_blueprint(subscription_bp, url_prefix='/subscription')
+    app.register_blueprint(rewards_bp, url_prefix='/rewards')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
 
     # Set up models
-    global User, FamilyMember
+    global User, FamilyMember, Supplement, SupplementIntake, Reminder, Subscription, SubscriptionProduct, Reward, Challenge, Referral, RewardTransaction, Product, Order
     User = get_user_model(db)
     FamilyMember = get_family_member_model(db)
+    Supplement = get_supplement_model(db)
+    SupplementIntake = get_supplement_intake_model(db)
+    Reminder = get_reminder_model(db)
+    Subscription = get_subscription_model(db)
+    SubscriptionProduct = get_subscription_product_model(db)
+    Reward = get_reward_model(db)
+    Challenge = get_challenge_model(db)
+    Referral = get_referral_model(db)
+    RewardTransaction = get_reward_transaction_model(db)
+    Product = get_product_model(db)
+    Order = get_order_model(db)
     # Store models in app.config for access from routes
     app.config['User'] = User
     app.config['FamilyMember'] = FamilyMember
+    app.config['Supplement'] = Supplement
+    app.config['SupplementIntake'] = SupplementIntake
+    app.config['Reminder'] = Reminder
+    app.config['Subscription'] = Subscription
+    app.config['SubscriptionProduct'] = SubscriptionProduct
+    app.config['Reward'] = Reward
+    app.config['Challenge'] = Challenge
+    app.config['Referral'] = Referral
+    app.config['RewardTransaction'] = RewardTransaction
+    app.config['Product'] = Product
+    app.config['Order'] = Order
     with app.app_context():
         db.create_all()
+        # Seed sample challenges if none exist
+        if Challenge.query.count() == 0:
+            sample_challenges = [
+                Challenge(description="Complete daily intake for a week", points=100),
+                Challenge(description="Refer a friend", points=50),
+                Challenge(description="Maintain streak for 30 days", points=200)
+            ]
+            db.session.add_all(sample_challenges)
+            db.session.commit()
+        # Seed admin user if none exists
+        if User.query.filter_by(role='admin').count() == 0:
+            admin_user = User(name='Admin User', email='admin@example.com')
+            admin_user.set_password('adminpassword')
+            admin_user.role = 'admin'
+            admin_user.verified = True
+            db.session.add(admin_user)
+            db.session.commit()
 
     # JWT blocklist callback
     @jwt.token_in_blocklist_loader
